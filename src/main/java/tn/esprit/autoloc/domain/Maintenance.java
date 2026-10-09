@@ -27,4 +27,7 @@ public class Maintenance {
 
     @Column(length = 500)
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Vehicule vehicule;
 }
