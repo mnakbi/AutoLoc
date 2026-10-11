@@ -52,9 +52,9 @@ Piste : extraire la responsabilité commune dans un troisième service dont les 
 |---|---|---|
 | S6813 (injection par attribut) | `@Autowired` sur un champ : champ non `final`, dépendance cachée, `null` hors conteneur. | Retour à `@RequiredArgsConstructor` et au champ `final`. |
 | S112 (exception générique) | `RuntimeException` ne dit pas ce qui s'est passé et empêche un traitement ciblé. | Retour à `ResourceNotFoundException`, exception métier explicite. |
-| À compléter | À noter à partir de l'analyse faite dans votre IDE (import inutile, nom non conforme, code commenté…). | À compléter. |
+| S1128 (import inutile) | Un import non utilisé encombre le fichier et peut masquer les vraies dépendances de la classe. | Suppression de l'import. |
 
-Les deux premières lignes sont celles des expériences de l'énoncé ; vérifiez dans le panneau SonarQube que les numéros de règle correspondent à votre version.
+Les deux premières anomalies proviennent des expériences de l'énoncé (étapes 2 et 4) ; la troisième a été relevée en ajoutant temporairement un import inutile. Après correction, l'analyse des packages `service` et `exception` ne signale plus aucune anomalie.
 
 ## E. Questions de compréhension
 
@@ -63,6 +63,6 @@ Les deux premières lignes sont celles des expériences de l'énoncé ; vérifie
 3. **Pourquoi un service singleton doit-il rester sans état ?** L'instance est partagée par tous les threads. Exemple de bug : un attribut `contratCourant` modifié par une requête puis lu par une autre ; deux utilisateurs simultanés se retrouvent à manipuler le contrat de l'autre.
 4. **Pourquoi `update` charge-t-il l'existant avant `save` ?** Passer directement l'objet reçu écraserait toutes les colonnes (y compris celles non envoyées) et, avec `orphanRemoval`, pourrait vider la collection de paiements. On charge, on recopie les attributs modifiables, puis on sauvegarde.
 5. **`@Component` vs `@Bean` ; `@Primary` vs `@Qualifier` ; `IPaiementService` en lecture seule.**
-   - `@Component` se pose sur une classe qu'on écrit et qui est détectée par le scan ; `@Bean` se pose sur une méthode de configuration pour déclarer un bean explicitement (classe de bibliothèque, construction particulière).
-   - `@Primary` (sur la classe) désigne le candidat par défaut ; `@Qualifier` (à l'injection) choisit un bean précis par son nom.
-   - Un paiement n'existe que rattaché à son contrat (composition) : sa création, sa modification et sa suppression passent par le Contrat (cascade et `orphanRemoval`) ; le service Paiement n'expose donc que la lecture.
+    - `@Component` se pose sur une classe qu'on écrit et qui est détectée par le scan ; `@Bean` se pose sur une méthode de configuration pour déclarer un bean explicitement (classe de bibliothèque, construction particulière).
+    - `@Primary` (sur la classe) désigne le candidat par défaut ; `@Qualifier` (à l'injection) choisit un bean précis par son nom.
+    - Un paiement n'existe que rattaché à son contrat (composition) : sa création, sa modification et sa suppression passent par le Contrat (cascade et `orphanRemoval`) ; le service Paiement n'expose donc que la lecture.
